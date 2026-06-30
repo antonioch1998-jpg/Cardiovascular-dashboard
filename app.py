@@ -26,23 +26,18 @@ except NameError:
     BASE_DIR = os.getcwd()
 DATA_FILE = os.path.join(BASE_DIR, "cardio_clean.csv")
 
-# ====== EDIT THESE ======================================================
 APP_TITLE = "Cardiovascular Disease — Risk Analytics Dashboard"
 AUTHOR = "Antonio Chakhtoura"          # <-- put your name
 MAJOR = "MSBA — Healthcare Analytics (MSBA382)"
-# Password: set APP_PASSWORD in Streamlit "Secrets" when you publish.
-# Until then it falls back to the value below — CHANGE IT.
 DEFAULT_PASSWORD = "cardio2026"
-# ========================================================================
+
 
 POS = "#C0392B"   # disease / high
 NEG = "#2E86C1"   # healthy / low
 SEX_COLORS = {"Male": "#2E86C1", "Female": "#C0392B"}
 
 
-# ----------------------------------------------------------------------
-# Password landing page
-# ----------------------------------------------------------------------
+
 def check_password() -> bool:
     def _entered():
         pw = st.session_state.get("pw_input", "")
@@ -72,9 +67,7 @@ if not check_password():
     st.stop()
 
 
-# ----------------------------------------------------------------------
-# Data loading
-# ----------------------------------------------------------------------
+
 @st.cache_data
 def load_patients():
     df = pd.read_csv(DATA_FILE)
@@ -112,9 +105,7 @@ def rate_by(frame, col):
     return g
 
 
-# ----------------------------------------------------------------------
-# Sidebar filters
-# ----------------------------------------------------------------------
+
 st.sidebar.title("Filters")
 g_sel = st.sidebar.multiselect("Gender", ["Male", "Female"], ["Male", "Female"])
 ages = ["30-39", "40-49", "50-59", "60-65"]
@@ -146,11 +137,9 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "Overview", "Gender & Age", "Risk Factors", "Predict Risk",
 ])
 
-# ======================================================================
-# TAB 1 — OVERVIEW
-# ======================================================================
+
 with tab1:
-    st.subheader("At a glance (current filters applied)")
+    st.subheader("At a glance")
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Patients", f"{len(f):,}")
     c2.metric("Have CVD", f"{cvd_rate(f):.1f}%")
@@ -178,9 +167,7 @@ with tab1:
         st.info("CVD = diseases of the heart and blood vessels. Target: `cardio` "
                 "(Yes/No). The dataset is roughly balanced (~50% have CVD).")
 
-# ======================================================================
-# TAB 2 — GENDER & AGE  (required by the brief)
-# ======================================================================
+
 with tab2:
     st.subheader("Distribution across gender and age")
 
@@ -213,9 +200,7 @@ with tab2:
     st.caption("CVD rate rises clearly with age — the strongest demographic "
                "signal — and differs between men and women.")
 
-# ======================================================================
-# TAB 3 — RISK FACTORS
-# ======================================================================
+
 with tab3:
     st.subheader("Which factors carry the most risk?")
     factor = st.selectbox(
@@ -249,9 +234,7 @@ with tab3:
     st.caption("High blood pressure and higher BMI stack up: the top-right cells "
                "carry the greatest risk.")
 
-# ======================================================================
-# TAB 4 — PREDICT (model)
-# ======================================================================
+
 @st.cache_resource(show_spinner=False)
 def train():
     from sklearn.compose import ColumnTransformer
